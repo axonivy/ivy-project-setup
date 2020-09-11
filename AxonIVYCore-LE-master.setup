@@ -18,7 +18,7 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="workspace.type.option"
-      storageURI="scope://Installation"
+      storageURI="scope://Workspace"
       label="Workspace Type:">
     <choice
         value="light"
@@ -26,6 +26,24 @@
     <choice
         value="full"
         label="full"/>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:VariableTask"
+      name="optional.ivy.projects"
+      storageURI="scope://Workspace"
+      label="Optional Ivy Projects:">
+    <choice
+        value="none"
+        label="None"/>
+    <choice
+        value="webeditor"
+        label="Html Editor"/>
+    <choice
+        value="ruleengine"
+        label="RuleEngine"/>
+    <choice
+        value="webeditor ruleengine"
+        label="Html Editor, RuleEngine"/>
   </setupTask>
   <setupTask
       xsi:type="setup:CompoundTask"
@@ -44,16 +62,6 @@
         xsi:type="setup:EclipseIniTask"
         option="-vm"
         value="${jre.location-11}/bin/javaw"/>
-    <setupTask
-        xsi:type="setup:EclipseIniTask"
-        option="-Dworkspace.type.option="
-        value="${workspace.type.option}"
-        vm="true"/>
-    <setupTask
-        xsi:type="setup:EclipseIniTask"
-        option="-Doptional.ivy.projects"
-        value="=${workspace.type.option}"
-        vm="true"/>
     <setupTask
         xsi:type="setup:EclipseIniTask"
         excludedTriggers="STARTUP"
@@ -2162,7 +2170,7 @@
             xsi:type="predicates:NotPredicate">
           <operand
               xsi:type="predicates:NamePredicate"
-              pattern=".*webeditor.*|.*pagedesigner.*|.*javafx.*|DemoProject|.*jsf.editor.*"/>
+              pattern=".*webeditor.*|.*pagedesigner.*|.*javafx.*|DocFactory|IvyAdd.ns.*|designer.rule.*|rule.engine.*"/>
         </predicate>
       </workingSet>
     </setupTask>
@@ -2206,13 +2214,84 @@
   </setupTask>
   <setupTask
       xsi:type="setup:CompoundTask"
+      filter="(optional.ivy.projects=*webeditor*)"
+      name="WorkspaceWebeditor">
+    <setupTask
+        xsi:type="git:GitCloneTask"
+        id="ivy.webeditor.git.clone"
+        remoteURI="https://bitbucket.org/axonivy-prod/ivy-extension-webeditor.git">
+      <configSections
+          name="core">
+        <properties
+            key="autocrlf"
+            value="false"/>
+      </configSections>
+      <description>Ivy Core GIT repository clone</description>
+    </setupTask>
+    <setupTask
+        xsi:type="projects:ProjectsImportTask"
+        id="ivy.webeditor.project.import.full">
+      <sourceLocator
+          rootFolder="${ivy.webeditor.git.clone.location}"
+          locateNestedProjects="true">
+        <predicate
+            xsi:type="predicates:NamePredicate"
+            pattern="designer.webeditor.*|lib.javafx|lib.javafx.swt|pagedesigner.*"/>
+      </sourceLocator>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.workingsets:WorkingSetTask">
+      <workingSet
+          name="Webeditor">
+        <predicate
+            xsi:type="predicates:NamePredicate"
+            pattern=".*webeditor.*|.*pagedesigner.*|.*javafx.*|DemoProject|.*jsf.editor.*"/>
+      </workingSet>
+    </setupTask>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      filter="(optional.ivy.projects=*ruleengine*)"
+      name="WorkspaceRuleEngine">
+    <setupTask
+        xsi:type="git:GitCloneTask"
+        id="ivy.ruleengine.git.clone"
+        remoteURI="https://bitbucket.org/axonivy-prod/ivy-extension-rules.git"
+        recursive="true">
+      <configSections
+          name="core">
+        <properties
+            key="autocrlf"
+            value="false"/>
+      </configSections>
+      <description>Ivy RuleEngine GIT repository clone</description>
+    </setupTask>
+    <setupTask
+        xsi:type="projects:ProjectsImportTask"
+        id="ivy.webeditor.project.import.full">
+      <sourceLocator
+          rootFolder="${ivy.ruleengine.git.clone.location}"
+          locateNestedProjects="true">
+        <predicate
+            xsi:type="predicates:NamePredicate"
+            pattern="rule.engine|rule.engine.tests|designer.rule.ui.*"/>
+      </sourceLocator>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.workingsets:WorkingSetTask">
+      <workingSet
+          name="RuleEngine">
+        <predicate
+            xsi:type="predicates:NamePredicate"
+            pattern="designer.rule.*|rule.engine.*"/>
+      </workingSet>
+    </setupTask>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:CompoundTask"
       name="build">
     <setupTask
         xsi:type="maven:MavenUpdateTask"/>
-    <setupTask
-        xsi:type="projects:ProjectsBuildTask"
-        refresh="true"
-        build="false"/>
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         excludedTriggers="MANUAL"
@@ -2221,6 +2300,10 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         excludedTriggers="MANUAL"/>
+    <setupTask
+        xsi:type="projects:ProjectsBuildTask"
+        refresh="true"
+        build="false"/>
   </setupTask>
   <stream name="master"
       label="master">
