@@ -18,7 +18,7 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="workspace.type.option"
-      storageURI="scope://Installation"
+      storageURI="scope://Workspace"
       label="Workspace Type:">
     <choice
         value="light"
@@ -44,11 +44,6 @@
         xsi:type="setup:EclipseIniTask"
         option="-vm"
         value="${jre.location-11}/bin/javaw"/>
-    <setupTask
-        xsi:type="setup:EclipseIniTask"
-        option="-Dworkspace.type.option="
-        value="${workspace.type.option}"
-        vm="true"/>
     <setupTask
         xsi:type="setup:EclipseIniTask"
         excludedTriggers="STARTUP"
@@ -2203,14 +2198,14 @@
         xsi:type="maven:MavenUpdateTask"/>
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
-        refresh="true"
-        build="false"/>
-    <setupTask
-        xsi:type="projects:ProjectsBuildTask"
         clean="true"
         build="false"/>
     <setupTask
         xsi:type="projects:ProjectsBuildTask"/>
+    <setupTask
+        xsi:type="projects:ProjectsBuildTask"
+        refresh="true"
+        build="false"/>
   </setupTask>
   <stream name="release/8.0"
       label="release/8.0">

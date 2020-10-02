@@ -30,20 +30,33 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="optional.ivy.projects"
+      defaultValue="none"
       storageURI="scope://Workspace"
       label="Optional Ivy Projects:">
     <choice
         value="none"
         label="None"/>
     <choice
-        value="webeditor"
-        label="Html Editor"/>
+        value="axis"
+        label="Axis 1 &amp; 2"/>
     <choice
         value="ruleengine"
         label="RuleEngine"/>
     <choice
+        value="webeditor"
+        label="Html Editor"/>
+    <choice
+        value="axis webeditor"
+        label="Axis 1 &amp; 2, Html Editor"/>
+    <choice
+        value="axis ruleengine"
+        label="Axis 1 &amp; 2, RuleEngine"/>
+    <choice
         value="webeditor ruleengine"
         label="Html Editor, RuleEngine"/>
+    <choice
+        value="axis webeditor ruleengine"
+        label="Axis 1 &amp; 2, Html Editor, RuleEngine"/>
   </setupTask>
   <setupTask
       xsi:type="setup:CompoundTask"
@@ -2149,18 +2162,27 @@
       filter="(workspace.type.option=full)"
       name="WorkspaceFull">
     <setupTask
-        xsi:type="projects:ProjectsImportTask"
-        id="ivy.core.project.import.full">
+        xsi:type="projects:ProjectsImportTask">
       <sourceLocator
-          rootFolder="${ivy.core.git.clone.location}/workspace"/>
-      <sourceLocator
-          rootFolder="${ivy.core.git.clone.location}/maven"/>
+          rootFolder="${ivy.core.git.clone.location}/workspace">
+        <predicate
+            xsi:type="predicates:NamePredicate"
+            pattern=".*designer.targetplatform"/>
+      </sourceLocator>
     </setupTask>
     <setupTask
         xsi:type="pde:TargetPlatformTask"
         filter=""
         name="Axon.ivy Designer">
       <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="projects:ProjectsImportTask"
+        id="ivy.core.project.import.full">
+      <sourceLocator
+          rootFolder="${ivy.core.git.clone.location}/workspace"/>
+      <sourceLocator
+          rootFolder="${ivy.core.git.clone.location}/maven"/>
     </setupTask>
     <setupTask
         xsi:type="setup.workingsets:WorkingSetTask">
@@ -2170,7 +2192,7 @@
             xsi:type="predicates:NotPredicate">
           <operand
               xsi:type="predicates:NamePredicate"
-              pattern=".*webeditor.*|.*pagedesigner.*|.*javafx.*|DocFactory|IvyAdd.ns.*|designer.rule.*|rule.engine.*"/>
+              pattern=".*webeditor.*|.*pagedesigner.*|.*javafx.*|DocFactory|IvyAdd.ns.*|rule.*|webservice.*axis.*"/>
         </predicate>
       </workingSet>
     </setupTask>
@@ -2214,6 +2236,77 @@
   </setupTask>
   <setupTask
       xsi:type="setup:CompoundTask"
+      filter="(optional.ivy.projects=*ruleengine*)"
+      name="WorkspaceAxis">
+    <setupTask
+        xsi:type="git:GitCloneTask"
+        id="ivy.axis.git.clone"
+        remoteURI="https://bitbucket.org/axonivy-prod/ivy-extension-ws-axis.git"
+        recursive="true">
+      <configSections
+          name="core">
+        <properties
+            key="autocrlf"
+            value="false"/>
+      </configSections>
+      <description>Ivy Axis GIT repository clone</description>
+    </setupTask>
+    <setupTask
+        xsi:type="projects:ProjectsImportTask"
+        id="ivy.webeditor.project.import.full">
+      <sourceLocator
+          rootFolder="${ivy.axis.git.clone.location}/workspace"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.workingsets:WorkingSetTask">
+      <workingSet
+          name="Axis1&amp;2">
+        <predicate
+            xsi:type="predicates:NamePredicate"
+            pattern="webservice.*axis.*"/>
+      </workingSet>
+    </setupTask>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      filter="(optional.ivy.projects=*ruleengine*)"
+      name="WorkspaceRuleEngine">
+    <setupTask
+        xsi:type="git:GitCloneTask"
+        id="ivy.ruleengine.git.clone"
+        remoteURI="https://bitbucket.org/axonivy-prod/ivy-extension-rules.git"
+        recursive="true">
+      <configSections
+          name="core">
+        <properties
+            key="autocrlf"
+            value="false"/>
+      </configSections>
+      <description>Ivy RuleEngine GIT repository clone</description>
+    </setupTask>
+    <setupTask
+        xsi:type="projects:ProjectsImportTask"
+        id="ivy.webeditor.project.import.full">
+      <sourceLocator
+          rootFolder="${ivy.ruleengine.git.clone.location}"
+          locateNestedProjects="true">
+        <predicate
+            xsi:type="predicates:NamePredicate"
+            pattern="rule.engine|rule.engine.tests|rule.designer.ui.*"/>
+      </sourceLocator>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.workingsets:WorkingSetTask">
+      <workingSet
+          name="RuleEngine">
+        <predicate
+            xsi:type="predicates:NamePredicate"
+            pattern="rule.*"/>
+      </workingSet>
+    </setupTask>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:CompoundTask"
       filter="(optional.ivy.projects=*webeditor*)"
       name="WorkspaceWebeditor">
     <setupTask
@@ -2246,44 +2339,6 @@
         <predicate
             xsi:type="predicates:NamePredicate"
             pattern=".*webeditor.*|.*pagedesigner.*|.*javafx.*|DemoProject|.*jsf.editor.*"/>
-      </workingSet>
-    </setupTask>
-  </setupTask>
-  <setupTask
-      xsi:type="setup:CompoundTask"
-      filter="(optional.ivy.projects=*ruleengine*)"
-      name="WorkspaceRuleEngine">
-    <setupTask
-        xsi:type="git:GitCloneTask"
-        id="ivy.ruleengine.git.clone"
-        remoteURI="https://bitbucket.org/axonivy-prod/ivy-extension-rules.git"
-        recursive="true">
-      <configSections
-          name="core">
-        <properties
-            key="autocrlf"
-            value="false"/>
-      </configSections>
-      <description>Ivy RuleEngine GIT repository clone</description>
-    </setupTask>
-    <setupTask
-        xsi:type="projects:ProjectsImportTask"
-        id="ivy.webeditor.project.import.full">
-      <sourceLocator
-          rootFolder="${ivy.ruleengine.git.clone.location}"
-          locateNestedProjects="true">
-        <predicate
-            xsi:type="predicates:NamePredicate"
-            pattern="rule.engine|rule.engine.tests|designer.rule.ui.*"/>
-      </sourceLocator>
-    </setupTask>
-    <setupTask
-        xsi:type="setup.workingsets:WorkingSetTask">
-      <workingSet
-          name="RuleEngine">
-        <predicate
-            xsi:type="predicates:NamePredicate"
-            pattern="designer.rule.*|rule.engine.*"/>
       </workingSet>
     </setupTask>
   </setupTask>
