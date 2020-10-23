@@ -73,10 +73,6 @@
         vm="true"/>
     <setupTask
         xsi:type="setup:EclipseIniTask"
-        option="-vm"
-        value="${jre.location-11}/bin/javaw"/>
-    <setupTask
-        xsi:type="setup:EclipseIniTask"
         excludedTriggers="STARTUP"
         option="-perspective"
         value="org.eclipse.jdt.ui.JavaPerspective"/>
