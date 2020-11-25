@@ -2079,7 +2079,7 @@
     <requirement
         name="org.eclipse.ajdt.feature.group"/>
     <repository
-        url="http://andrei.gmxhome.de/eclipse/"/>
+        url="https://raw.githubusercontent.com/iloveeclipse/plugins/latest/"/>
     <repository
         url="http://download.eclipse.org/tools/ajdt/47/dev/update/"/>
   </setupTask>
