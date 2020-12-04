@@ -2079,7 +2079,7 @@
   <setupTask
       xsi:type="git:GitCloneTask"
       id="ivy.core.git.clone"
-      remoteURI="https://bitbucket.org/axonivy-prod/ivy-core.git">
+      remoteURI="git@bitbucket.org:axonivy-prod/ivy-core.git">
     <configSections
         name="core">
       <properties
