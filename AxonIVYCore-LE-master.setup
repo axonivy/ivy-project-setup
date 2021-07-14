@@ -2921,7 +2921,7 @@
     <setupTask
         xsi:type="pde:TargetPlatformTask"
         filter=""
-        name="Axon.ivy Designer">
+        name="Axon Ivy Designer">
       <description></description>
     </setupTask>
     <setupTask
@@ -2964,7 +2964,7 @@
     <setupTask
         xsi:type="pde:TargetPlatformTask"
         filter=""
-        name="Axon.ivy Designer DEV">
+        name="Axon Ivy Designer DEV">
       <description></description>
     </setupTask>
     <setupTask
